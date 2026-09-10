@@ -9,9 +9,42 @@ export default function Login() {
 
   // 2.2 function definition Area
 
-  // let LoginUser = ()=>{
-  //   alert("Login");
-  // } 
+  let LoginUser = ()=>{
+    // alert("Login");
+    let payload={ 
+        "identifier": document.querySelector('input[type=email]').value,
+        "password": document.querySelector('input[type=password]').value
+    }
+    console.log(payload);
+
+    fetch(`http://localhost:1337/api/auth/local`,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(payload)
+    })
+    .then(res=>res.json())
+    .then((data)=>{
+      if(data["jwt"] !== undefined){
+        // Login success
+        console.log('token------>',data["jwt"]);
+        
+        // alert("login successful")
+
+        window.location.href='/business_register';
+
+        // Store the token in the localStorage
+        window.localStorage.setItem('jwt_token',data["jwt"])
+      }else{
+        //Login failed
+        alert("failed")
+
+      }     
+    })
+    .catch(err=>err)
+    
+  } 
 
   // Return Statement 
   return (
@@ -26,8 +59,8 @@ export default function Login() {
         <Form.Label>Password</Form.Label>
         <Form.Control name='password' type="password" placeholder="Password" />
       </Form.Group>
-      <Button variant="primary" type="button">
-        Submit
+      <Button variant="primary" type="button" onClick={ LoginUser }>
+        Login
       </Button>
     </Form>
     </>

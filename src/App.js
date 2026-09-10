@@ -5,6 +5,7 @@ import Detail from './pages/Detail'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Layout from './components/ui/Layout'
+import BusinessRegister from './pages/BusinessRegister'
 
 
 export default function App() {
@@ -13,10 +14,16 @@ export default function App() {
             <Routes>
                 <Route path='/' element={<Layout/>}>
                 <Route index element={<Home/>}></Route>
-                <Route path='/detail' element={<Detail/>}></Route>
+                <Route path='detail' element={<Detail/>}></Route>
+                <Route path='register' element={<Register/>}></Route>
+                <Route path='login' element={<Login/>}></Route>
+                {
+                   window.localStorage.getItem('jwt_token') !== null &&
+                  <Route path='business_register' element={<BusinessRegister/>}></Route>
+                   
+
+                }
                 </Route>
-                <Route path='/register' element={<Register/>}></Route>
-                <Route path='/login' element={<Login/>}></Route>
             </Routes>
     </BrowserRouter>
 

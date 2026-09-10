@@ -4,6 +4,15 @@ import logo from '../../logo.svg'
 import { Link } from 'react-router-dom' 
 
 export default function Navigation() {
+
+  // 2.2 function definition Area
+
+  let LogoutUser=()=>{
+    window.localStorage.removeItem('jwt_token')
+    window.location.href= '/login';
+  }
+
+
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container fluid>
@@ -41,8 +50,21 @@ export default function Navigation() {
           {/* Links - Right */}
           <Nav>
             <Link to="/" className='btn btn-link'>Home</Link>
-            <Link to="/login" className='btn btn-link'>Login</Link>
-            <Link to="/register" className='btn btn-link'>Register</Link>
+            {
+              window.localStorage.getItem('jwt_token') === null &&
+              <>
+              <Link to="/login" className='btn btn-link'>Login</Link>
+              <Link to="/register" className='btn btn-link'>Register</Link>
+              </>
+
+            }
+            {
+              window.localStorage.getItem('jwt_token') !== null &&
+              <>
+              <Nav.Link onClick={()=>{ LogoutUser() }} className='btn btn-link'>Logout</Nav.Link>
+              </>
+
+            }
           </Nav>
 
         </Navbar.Collapse>
