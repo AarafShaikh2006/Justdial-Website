@@ -16,3 +16,13 @@ footer{
     height: 200px;
     border: 1px dashed orange;
 }
+
+.filter-buttons {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.filter-buttons::-webkit-scrollbar {
+    display: none;
+}

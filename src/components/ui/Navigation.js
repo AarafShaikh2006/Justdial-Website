@@ -1,9 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Container, Form, Nav, Navbar } from 'react-bootstrap'
-import logo from '../../logo.svg'
 import { Link } from 'react-router-dom' 
+import { URL } from '../../helpers/url'
 
 export default function Navigation() {
+
+  // 2.1 Hook Area
+  const [logo,setLogo] = useState('')
+
+  useEffect(()=>{
+    fetch(`${URL}/api/website?populate=*`,{})
+    .then((res)=>{
+      return res.json()
+    })
+    .then((data)=>{
+      console.log('logo------->',data.data.attributes.logo.data.attributes.url);
+      setLogo(data.data.attributes.logo.data.attributes.url)
+    })
+    .catch(err=>err)
+
+  },[])
 
   // 2.2 function definition Area
 
@@ -21,7 +37,7 @@ export default function Navigation() {
         <Navbar.Brand href="#" className="p-0 m-0">
           <img
             alt="Logo"
-            src={logo}
+            src={`${URL}${logo}`}
             width="80"
             height="80"
             className="d-inline-block align-top"
@@ -62,6 +78,7 @@ export default function Navigation() {
               window.localStorage.getItem('jwt_token') !== null &&
               <>
               <Nav.Link onClick={()=>{ LogoutUser() }} className='btn btn-link'>Logout</Nav.Link>
+              <Link className='btn btn-link'  to='/business_register'>Register Business</Link>
               </>
 
             }
