@@ -17,6 +17,10 @@ footer{
     border: 1px dashed orange;
 }
 
+body{
+    background-color: #E8E8E8;
+}
+
 .filter-buttons {
     overflow-x: auto;
     scrollbar-width: none;

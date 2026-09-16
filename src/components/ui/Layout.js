@@ -7,7 +7,7 @@ import { Outlet } from 'react-router-dom'
 export default function Layout() {
   return (
    <>
-   <Container className='layout'>
+   <Container className='layout bg-light'>
         <Header/>
         <main>
             <Outlet />

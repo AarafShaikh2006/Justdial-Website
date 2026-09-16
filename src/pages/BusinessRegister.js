@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { Form , Button} from 'react-bootstrap'
 import Swal from 'sweetalert2';
-import { URL } from '../helpers/url';
+import { URL } from '../helpers/helper';
 
 
 // Definition Area
@@ -221,6 +221,7 @@ export default function BusinessRegister() {
            } 
 
           {
+                cities.length !== 0 &&
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>City</Form.Label>
                 <Form.Select name='city_id' aria-label="Default select example">

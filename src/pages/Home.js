@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
 
 export default function Home() {
 
@@ -30,7 +31,7 @@ export default function Home() {
                         return (
                             <li key={idx} className='me-3'>
 
-                                <a href='#!'>
+                                <Link to='/search'>
 
                                     <img
                                         src={
@@ -43,7 +44,7 @@ export default function Home() {
 
                                     {cv.attributes.name}
 
-                                </a>
+                                </Link>
 
                             </li>
                         )
