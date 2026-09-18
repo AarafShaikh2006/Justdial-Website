@@ -31,7 +31,7 @@ export default function Home() {
                         return (
                             <li key={idx} className='me-3'>
 
-                                <Link to='/search'>
+                                <Link to={'/search?category_name='+cv.attributes.name}>
 
                                     <img
                                         src={

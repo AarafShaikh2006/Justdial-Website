@@ -194,7 +194,7 @@ export default function Navigation() {
 
         {/* Logo */}
 
-        <Navbar.Brand href="#" className="p-0 m-0">
+        <Link to="/" className="p-0 m-0">
 
           <img
             alt="Logo"
@@ -204,7 +204,7 @@ export default function Navigation() {
             className="d-inline-block align-top"
           />
 
-        </Navbar.Brand>
+        </Link>
 
 
         <Navbar.Toggle aria-controls="navbarScroll" />

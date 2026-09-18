@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Card,
   Row,
@@ -10,8 +10,40 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar, faFilter, faPhone  } from '@fortawesome/free-solid-svg-icons'
+import { useSearchParams } from 'react-router-dom'
+import { URL } from '../helpers/helper'
 
 export default function Search() {
+
+  //2.1 Hooks Area
+
+  const [searchParam, setSearchParams]=useSearchParams()
+
+  
+  useEffect(()=>{
+
+    console.log('category_name------>',searchParam.get('category_name'));
+
+    fetch(`${URL}/api/businesses?populate=*&filters[business_categories][name][$containsi]=${searchParam.get('category_name')}`)
+    .then((res)=>{
+        return res.json()
+    })
+    .then((data)=>{
+      console.log(data);
+      
+    })
+    .catch(err=>{
+      console.log(err);
+      
+    })
+    
+
+    // http://localhost:1337/api/businesses?populate=*&filters[business_categories][name][$containsi]=home Decor
+
+  },[])
+
+
+
 
   return (
     <>
@@ -196,7 +228,7 @@ export default function Search() {
                   src="https://content.jdmagicbox.com/v2/comp/mumbai/a9/022pxx22.xx22.260424215513.d6a9/catalogue/parsi-table-restaurant-anand-nagar-jogeshwari-west-mumbai-parsi-restaurants-5if7za84eh-250.jpg?w=640&q=75"
                   />
 
-                   <Button variant="success">
+                   <Button variant="success" className='w-100'>
                   <FontAwesomeIcon icon={faPhone} /> 9839393922
                   </Button>
 
