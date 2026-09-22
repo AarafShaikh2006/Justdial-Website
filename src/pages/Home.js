@@ -23,23 +23,24 @@ export default function Home() {
         <>
             <h1>Home page</h1>
 
-            <ul className='nav'>
+            <ul className='nav  gap-3'>
 
                 {
                     businessCategory.map((cv, idx) => {
 
                         return (
-                            <li key={idx} className='me-3'>
+                            <li key={idx} className='text-center'>
 
                                 <Link to={'/search?category_name='+cv.attributes.name}>
 
-                                    <img
+                                    <img className='img-fluid rounded shadow-sm bg-light p-2 border'
                                         src={
                                             'http://localhost:1337' +
                                              cv?.attributes?.image?.data?.[0]?.attributes?.url
                                         }
                                         alt=''
-                                        width='50px'
+                                        height='70px'
+                                        width='70px'
                                     /><br />
 
                                     {cv.attributes.name}

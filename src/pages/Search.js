@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Card,
   Row,
@@ -10,39 +10,33 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar, faFilter, faPhone  } from '@fortawesome/free-solid-svg-icons'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { URL } from '../helpers/helper'
 
 export default function Search() {
 
   //2.1 Hooks Area
 
-  const [searchParam, setSearchParams]=useSearchParams()
+  const [businesses,setBusinesses] = useState([])
 
+  const [searchParams]=useSearchParams()
   
   useEffect(()=>{
+      console.log('category_name-------->',searchParams.get('category_name'));
 
-    console.log('category_name------>',searchParam.get('category_name'));
-
-    fetch(`${URL}/api/businesses?populate=*&filters[business_categories][name][$containsi]=${searchParam.get('category_name')}`)
-    .then((res)=>{
-        return res.json()
-    })
-    .then((data)=>{
-      console.log(data);
-      
-    })
-    .catch(err=>{
-      console.log(err);
-      
-    })
-    
-
-    // http://localhost:1337/api/businesses?populate=*&filters[business_categories][name][$containsi]=home Decor
-
-  },[])
-
-
+        fetch(`${URL}/api/businesses?populate=*&filters[business_categories][name][$containsi]=${searchParams.get('category_name')}`)
+        .then(res=>res.json())
+        .then(data=>{
+            console.log('data.data -------->',data.data);
+            setBusinesses(data.data);
+            
+        })
+        .catch(err=>{
+            console.log(err)
+        })
+        //http://localhost:1337/api/businesses?populate=*&filters[business_categories][name][$containsi]=home decore
+    },[]);
+   
 
 
   return (
@@ -150,66 +144,70 @@ export default function Search() {
 
         <Col sm={9}>
 
-          <Card className='p-3'>
 
-            <Row>
+            {
+              businesses.map((cv,idx,arr)=>{
+                return <Link key={cv.id} to='/detail' style={{textDecoration: 'none'}}>
+                <Card className='p-3 mb-3 '>
 
-              <Col sm={3}>
+                  <Row>
 
-                <Card.Img
-                  className='img-fluid'
-                  variant="top"
-                  src="https://content.jdmagicbox.com/v2/comp/mumbai/a9/022pxx22.xx22.260424215513.d6a9/catalogue/parsi-table-restaurant-anand-nagar-jogeshwari-west-mumbai-parsi-restaurants-5if7za84eh-250.jpg?w=640&q=75"
-                />
+                    <Col sm={3}>
+                      <Card.Img
+                        className='img-fluid'
+                        variant="top"
+                        src={URL+cv.attributes.photo.data[0].attributes.url}
+                      />
 
-              </Col>
+                    </Col>
 
-              <Col sm={9}>
+                    <Col sm={9}>
 
-                <Card.Body>
+                      <Card.Body>
 
-                  <Card.Title>
-                    Parsi Table Restaurant
-                  </Card.Title>
+                        <Card.Title>
+                        {cv.attributes.name}
+                        </Card.Title>
 
-                  <Badge className='p-2 fs-6' bg="success">
-                    4.8
-                  </Badge>
+                        <Badge className='p-2 fs-6' bg="success">
+                          4.8
+                        </Badge>
 
-                  <span className='ms-2'>
-                    <FontAwesomeIcon icon={faStar} className='text-warning' />
-                    <FontAwesomeIcon icon={faStar} className='text-warning'/>
-                    <FontAwesomeIcon icon={faStar} className='text-warning'/>
-                    <FontAwesomeIcon icon={faStar} className='text-warning'/>
-                    <FontAwesomeIcon icon={faStar} className='text-secondary'/>
-                  </span>
+                        <span className='ms-2'>
+                          <FontAwesomeIcon icon={faStar} className='text-warning' />
+                          <FontAwesomeIcon icon={faStar} className='text-warning'/>
+                          <FontAwesomeIcon icon={faStar} className='text-warning'/>
+                          <FontAwesomeIcon icon={faStar} className='text-warning'/>
+                          <FontAwesomeIcon icon={faStar} className='text-secondary'/>
+                        </span>
 
-                  <span className='ms-2'>
-                    97 Rating
-                  </span>
+                        <span className='ms-2'>
+                          97 Rating
+                        </span>
 
-                  <Card.Text>
-                    Some quick example text to build on the card title
-                    and make up the bulk of the card's content.
-                  </Card.Text>
+                        <Card.Text>
+                          {cv.attributes.desc}
+                        </Card.Text>
+                      
+                      <div className='d-flex gap-2'>
+                        <Button className='btn btn-success'>
+                        <FontAwesomeIcon icon={faPhone} /> {cv.attributes.phone}
+                        </Button>
+                      </div>
+
+                      </Card.Body>
+
+                    </Col>
+
+                  </Row>
+
+                </Card>
+                </Link>
                 
-                <div className='d-flex gap-2'>
-                  <Button variant="success">
-                  <FontAwesomeIcon icon={faPhone} /> 9839393922
-                  </Button>
+              })
+            }
 
-                  <Button variant='primary'>Order online</Button>
-                  
-                  <Button variant='primary'>Menu</Button>
-                </div>
-
-                </Card.Body>
-
-              </Col>
-
-            </Row>
-
-          </Card>
+            
 
         </Col>
 
@@ -244,6 +242,8 @@ export default function Search() {
                    <Button variant="success" className='w-100'>
                   <FontAwesomeIcon icon={faPhone} /> 9839393922
                   </Button>
+
+                  
 
               </Col>
 
