@@ -13,12 +13,14 @@ import { faStar, faFilter, faPhone  } from '@fortawesome/free-solid-svg-icons'
 import { Link, useSearchParams } from 'react-router-dom'
 import { URL } from '../helpers/helper'
 
+import img from '../assets/img/download.png'
+
 export default function Search() {
 
   //2.1 Hooks Area
 
   const [businesses,setBusinesses] = useState([])
-
+  const [star,setStar] = useState([]) 
   const [searchParams]=useSearchParams()
   
   useEffect(()=>{
@@ -29,13 +31,19 @@ export default function Search() {
         .then(data=>{
             console.log('data.data -------->',data.data);
             setBusinesses(data.data);
+            for (let index = 1; index < data.data.attributes.star; index++) {
+              // setStar([...star,<FontAwesomeIcon icon={faStar} className='text-warning' />])
+              
+            }
+
+
             
         })
         .catch(err=>{
             console.log(err)
         })
         //http://localhost:1337/api/businesses?populate=*&filters[business_categories][name][$containsi]=home decore
-    },[]);
+    },[searchParams]);
    
 
 
@@ -147,7 +155,7 @@ export default function Search() {
 
             {
               businesses.map((cv,idx,arr)=>{
-                return <Link key={cv.id} to='/detail' style={{textDecoration: 'none'}}>
+                return <Link key={cv.id} to={'/detail?hotel_id='+cv.id} style={{textDecoration: 'none'}}>
                 <Card className='p-3 mb-3 '>
 
                   <Row>
@@ -156,7 +164,7 @@ export default function Search() {
                       <Card.Img
                         className='img-fluid'
                         variant="top"
-                        src={URL+cv.attributes.photo.data[0].attributes.url}
+                        src={ (cv.attributes.photo.data !== null) ? URL+cv.attributes.photo.data[0].attributes.url: img}
                       />
 
                     </Col>
@@ -170,15 +178,15 @@ export default function Search() {
                         </Card.Title>
 
                         <Badge className='p-2 fs-6' bg="success">
-                          4.8
+                          4.8   
                         </Badge>
 
                         <span className='ms-2'>
-                          <FontAwesomeIcon icon={faStar} className='text-warning' />
-                          <FontAwesomeIcon icon={faStar} className='text-warning'/>
-                          <FontAwesomeIcon icon={faStar} className='text-warning'/>
-                          <FontAwesomeIcon icon={faStar} className='text-warning'/>
-                          <FontAwesomeIcon icon={faStar} className='text-secondary'/>
+                        {star.map((cv2,idx2,arr2)=>{
+
+                          return cv2
+
+                        })}                         
                         </span>
 
                         <span className='ms-2'>
@@ -190,9 +198,9 @@ export default function Search() {
                         </Card.Text>
                       
                       <div className='d-flex gap-2'>
-                        <Button className='btn btn-success'>
+                        <a href={"tel:"+cv.attributes.phone} className='btn btn-success' onClick={(e)=>{ e.stopPropagation() }}>
                         <FontAwesomeIcon icon={faPhone} /> {cv.attributes.phone}
-                        </Button>
+                        </a>
                       </div>
 
                       </Card.Body>
@@ -207,10 +215,7 @@ export default function Search() {
               })
             }
 
-            
-
         </Col>
-
 
         {/* Right Side */}
         <Col sm={3}>
