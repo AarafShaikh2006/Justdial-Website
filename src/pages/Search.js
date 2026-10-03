@@ -35,9 +35,6 @@ export default function Search() {
               // setStar([...star,<FontAwesomeIcon icon={faStar} className='text-warning' />])
               
             }
-
-
-            
         })
         .catch(err=>{
             console.log(err)
