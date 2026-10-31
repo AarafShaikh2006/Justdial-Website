@@ -17,15 +17,14 @@ export default function Detail() {
 
     // 2.1 Hook Area
 
-    const [busDetail, setBusDetail] = useState([])
+    // const [setBusDetail] = useState([])
     const [reviewPayload,setReviewPayload] = useState({
                        
                             "data": {
                                 "rate_scale": 5,
                                 "description": "very good",
-                                "businesses": [
-                                1
-                                ]
+                                "business": "2",
+                                "users_permissions_users": 9,
                             }
 
     })
@@ -34,16 +33,26 @@ export default function Detail() {
 
     // 2.2 function Definition Area
 
-    useEffect(() => {
+    
+    const businessid=searchParams.get('business_id');
+
+    useEffect(() => {  
+
+        setReviewPayload(prev => ({
+            ...prev,
+            data:{
+                ...prev.data,
+                users_permissions_users:parseInt(window.localStorage.getItem('user_id'))
+            }
+        }));
 
         //   svg.addEventListener('mouseover', ()=> console.log('Event: mouseover'));
 
 
-          console.log('hotel_id-------->',searchParams.get('hotel_id'));
+        //   console.log('business_id-------->',searchParams.get('business_id'));
 
-          let hotelid=searchParams.get('hotel_id');
       
-        fetch(`${URL}/api/businesses?&populate=*&filters[id][$eq]=`+hotelid)
+        fetch(`${URL}/api/businesses?&populate=*&filters[id][$eq]=${businessid}`)
             .then((res) => {
                 return res.json()
             })
@@ -51,75 +60,104 @@ export default function Detail() {
                 console.log('detail page', data);
                 if (data.data.length>0) {
                     setBusPhotos(data.data[0].attributes.photo.data)
-                    //  busDetail[0].attributes.photo.data
-                    setBusDetail(data.data)                  
-                }else{
-
+                    //  busDetail[0].attributes.photo.data                 
                 }
-
             })
             .catch((err) => {
                 console.log(err)
             })
 
-    }, [])
+    }, [businessid]);
 
-    let star = (e) => {
-
-    console.log(e.currentTarget);
-
-    let elem = e.currentTarget;
-
-    // Reset all stars
-    let stars = elem.parentElement.children;
-
-    for (let i = 0; i < stars.length; i++) {
-        stars[i].classList.remove('text-warning');
-        stars[i].classList.add('text-secondary');
-    }
-
-    // Color clicked/hovered star
-    elem.classList.remove('text-secondary');
-    elem.classList.add('text-warning');
-
-    console.log(elem.getAttribute('data-rateno'));
-
-    let desc = document.querySelector('textarea.review_desc').value;
-
-    console.log('desc', desc);
-
-    setReviewPayload({
-        ...reviewPayload,
-        data: {
-            ...reviewPayload.data,
-            rate_scale: parseInt(elem.getAttribute("data-rateno")),
-            description: desc
-        }
-    });
-
-    // Color previous stars
-    let prev = elem.previousElementSibling;
-
-    while (prev) {
-
-        prev.classList.remove('text-secondary');
-        prev.classList.add('text-warning');
-
-        prev = prev.previousElementSibling;
-    }
-}
-   
-    let submitReview=(e)=>{
-        let desc=document.querySelector('textarea.review_desc').value;
-        console.log('desc',desc);
-
+    const handleSubmit=(value) => {
+        // evt.preventDefault();
+        console.log(value);
            setReviewPayload({
             ...reviewPayload,
             data:{
                 ...reviewPayload.data,
-                description:desc
+                description:value
             }
+    })
 
+}
+
+    let star=(e)=>{
+
+        console.log(e.currentTarget);
+    
+          let elem = e.currentTarget;
+          
+        // Reset all stars
+        let stars = elem.parentElement.children;
+    
+        for (let i = 0; i < stars.length; i++) {
+            stars[i].classList.remove('text-warning');
+            stars[i].classList.add('text-secondary');
+        }
+    
+        // Color clicked/hovered star
+        elem.classList.remove('text-secondary');
+        elem.classList.add('text-warning');
+     
+        console.log(elem.getAttribute('data-rateno'));
+    
+        let desc = document.querySelector('textarea.review_desc').value;
+    
+        console.log('desc', desc);
+    
+        setReviewPayload({
+            ...reviewPayload,
+            data: {
+                ...reviewPayload.data,
+                rate_scale: parseInt(elem.getAttribute("data-rateno")),
+                description: desc
+            }
+        });
+    
+        //  Color previous stars
+         let prev = elem.previousElementSibling;
+    
+        while (prev) {
+    
+          prev.classList.remove('text-secondary');
+           prev.classList.add('text-warning');
+    
+          prev = prev.previousElementSibling;
+    
+         }
+    }
+
+   
+    let submitReview=(e)=>{
+        // let desc=document.querySelector('textarea.review_desc').value;
+        // console.log('desc',desc);
+
+        //    setReviewPayload({
+        //     ...reviewPayload,
+        //     data:{
+        //         ...reviewPayload.data,
+        //         description:desc
+        //     }
+            
+
+      //  })
+
+        fetch(`${URL}/api/reviews`,{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "Authorization":"Bearer "+window.localStorage.getItem('jwt_token')
+            },
+            body:JSON.stringify(reviewPayload)
+        })
+        .then((res)=>{
+            return res.json()
+        })
+        .then(data=>{
+            console.log('data',data);
+        }).catch(err=>{
+            console.log('err',err);
         })
     }
 
@@ -133,9 +171,8 @@ export default function Detail() {
                         <Carousel
                             indicators={false}
                         >
-
-                        {
-                           busPhotos.map((cv,idx,arr)=>{
+                        {   
+                           busPhotos &&  busPhotos.map((cv,idx,arr)=>{
                             console.log('images',cv);
                             
                                 return <Carousel.Item key={idx}>
@@ -168,13 +205,10 @@ export default function Detail() {
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>Tell us about your experience</Form.Label>
-                    <Form.Control className='review_desc' as="textarea" rows={3}/>
+                    <Form.Control className='review_desc' as="textarea" rows={3} onChange={e => handleSubmit(e.target.value)} />
                 </Form.Group>
                 <Button variant="primary" type="button" onClick={(e)=>{submitReview(e)}}>
                     Submit
-                </Button>
-                <Button variant="primary" type="button" onClick={(e)=>{console.log(reviewPayload)}}>
-                    Get Payload
                 </Button>
              </Form>           
 

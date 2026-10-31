@@ -152,7 +152,7 @@ export default function Search() {
 
             {
               businesses.map((cv,idx,arr)=>{
-                return <Link key={cv.id} to={'/detail?hotel_id='+cv.id} style={{textDecoration: 'none'}}>
+                return <Link key={cv.id} to={'/detail?business_id='+cv.id} style={{textDecoration: 'none'}}>
                 <Card className='p-3 mb-3 '>
 
                   <Row>
