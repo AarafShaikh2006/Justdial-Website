@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
+
 import {
+  Container,
   Card,
   Row,
   Col,
@@ -9,196 +11,357 @@ import {
 } from 'react-bootstrap'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar, faFilter, faPhone  } from '@fortawesome/free-solid-svg-icons'
-import { Link, useSearchParams } from 'react-router-dom'
+
+import {
+  faStar,
+  faFilter,
+  faPhone
+} from '@fortawesome/free-solid-svg-icons'
+
+import { Link, useSearchParams , useNavigate } from 'react-router-dom'
+
 import { URL } from '../helpers/helper'
 
 import img from '../assets/img/download.png'
 
 export default function Search() {
 
-  //2.1 Hooks Area
+  // Hooks Area
 
-  const [businesses,setBusinesses] = useState([])
-  const [star,setStar] = useState([]) 
-  const [searchParams]=useSearchParams()
-  
-  useEffect(()=>{
-      console.log('category_name-------->',searchParams.get('category_name'));
+  const [businesses, setBusinesses] = useState([])
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate();
 
-        fetch(`${URL}/api/businesses?populate=*&filters[business_categories][name][$containsi]=${searchParams.get('category_name')}`)
-        .then(res=>res.json())
-        .then(data=>{
-            console.log('data.data -------->',data.data);
-            setBusinesses(data.data);
-            for (let index = 1; index < data.data.attributes.star; index++) {
-              // setStar([...star,<FontAwesomeIcon icon={faStar} className='text-warning' />])
-              
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-        //http://localhost:1337/api/businesses?populate=*&filters[business_categories][name][$containsi]=home decore
-    },[searchParams]);
-   
+  // Fetch Businesses
+
+  useEffect(() => {
+    const categoryName = searchParams.get('category_name')
+
+    if (!categoryName) {
+      setBusinesses([])
+      return
+    }
+
+    fetch(
+      `${URL}/api/businesses?populate=*&filters[business_categories][name][$containsi]=${encodeURIComponent(categoryName)}`
+    )
+      .then(res => res.json())
+      .then(data => {
+        console.log('Business Data:', data.data)
+        setBusinesses(data.data || [])
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+  }, [searchParams])
 
 
   return (
-    <>
-      <h1>Search Filter</h1>
+
+    <Container fluid className="py-4 px-3 px-md-4">
+
+      {/* Page Heading */}
+
+      <Row className="mb-4">
+
+        <Col xs={12}>
+
+          <h2 className="fw-bold mb-1">
+            Search Results
+          </h2>
+
+          <p className="text-muted mb-0">
+            Find the best businesses for your needs.
+          </p>
+
+        </Col>
+
+      </Row>
+
 
       {/* Filter Bar */}
-      <div className='d-flex gap-2 mb-3 flex-wrap p-2'>
 
-        {/* Sort By */}
-        <Dropdown>
-          <Dropdown.Toggle variant="outline-secondary">
-            Sort By
-          </Dropdown.Toggle>
+      <Row className="mb-4">
 
-          <Dropdown.Menu>
-            <Dropdown.Item>Relevance</Dropdown.Item>
-            <Dropdown.Item>Rating - High to Low</Dropdown.Item>
-            <Dropdown.Item>Distance - Near to Far</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+        <Col xs={12}>
 
+          <div className="d-flex flex-wrap align-items-center gap-2">
 
-        {/* Ratings */}
-        <Dropdown>
-          <Dropdown.Toggle variant="outline-secondary">
-            Ratings
-          </Dropdown.Toggle>
+            {/* Sort By */}
 
-          <Dropdown.Menu>
-            <Dropdown.Item>4+ Rating</Dropdown.Item>
-            <Dropdown.Item>3+ Rating</Dropdown.Item>
-            <Dropdown.Item>2+ Rating</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+            <Dropdown>
+
+              <Dropdown.Toggle variant="outline-secondary">
+                Sort By
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item>Relevance</Dropdown.Item>
+                <Dropdown.Item>Rating - High to Low</Dropdown.Item>
+                <Dropdown.Item>Distance - Near to Far</Dropdown.Item>
+              </Dropdown.Menu>
+
+            </Dropdown>
 
 
-        {/* Fees */}
-        <Dropdown>
-          <Dropdown.Toggle variant="outline-secondary">
-            Fees
-          </Dropdown.Toggle>
+            {/* Ratings */}
 
-          <Dropdown.Menu>
-            <Dropdown.Item>Free</Dropdown.Item>
-            <Dropdown.Item>Below ₹500</Dropdown.Item>
-            <Dropdown.Item>₹500 - ₹1000</Dropdown.Item>
-            <Dropdown.Item>Above ₹1000</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+            <Dropdown>
 
+              <Dropdown.Toggle variant="outline-secondary">
+                Ratings
+              </Dropdown.Toggle>
 
-        {/* Stream */}
-        <Dropdown>
-          <Dropdown.Toggle variant="outline-secondary">
-            Stream
-          </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item>4+ Rating</Dropdown.Item>
+                <Dropdown.Item>3+ Rating</Dropdown.Item>
+                <Dropdown.Item>2+ Rating</Dropdown.Item>
+              </Dropdown.Menu>
 
-          <Dropdown.Menu>
-            <Dropdown.Item>Information Technology</Dropdown.Item>
-            <Dropdown.Item>Commerce</Dropdown.Item>
-            <Dropdown.Item>Science</Dropdown.Item>
-            <Dropdown.Item>Arts</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+            </Dropdown>
 
 
-        {/* Degree Type */}
-        <Dropdown>
-          <Dropdown.Toggle variant="outline-secondary">
-            Degree Type
-          </Dropdown.Toggle>
+            {/* Fees */}
 
-          <Dropdown.Menu>
-            <Dropdown.Item>Graduation</Dropdown.Item>
-            <Dropdown.Item>Post Graduation</Dropdown.Item>
-            <Dropdown.Item>Diploma</Dropdown.Item>
-            <Dropdown.Item>Certificate</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+            <Dropdown>
 
+              <Dropdown.Toggle variant="outline-secondary">
+                Fees
+              </Dropdown.Toggle>
 
-        {/* More Filters */}
-        <Dropdown>
-          <Dropdown.Toggle variant="outline-success">
-            <FontAwesomeIcon icon={faFilter} className='me-2' />
-            All Filters
-          </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item>Free</Dropdown.Item>
+                <Dropdown.Item>Below ₹500</Dropdown.Item>
+                <Dropdown.Item>₹500 - ₹1000</Dropdown.Item>
+                <Dropdown.Item>Above ₹1000</Dropdown.Item>
+              </Dropdown.Menu>
 
-          <Dropdown.Menu>
-            <Dropdown.Item>Top Rated</Dropdown.Item>
-            <Dropdown.Item>Quick Response</Dropdown.Item>
-            <Dropdown.Item>JD Verified</Dropdown.Item>
-            <Dropdown.Item>JD Trust</Dropdown.Item>
-            <Dropdown.Item>Managed By</Dropdown.Item>
-            <Dropdown.Item>Student Gender</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-
-      </div>
+            </Dropdown>
 
 
-      {/* Search Result */}
-      <Row>
+            {/* Stream */}
 
-        <Col sm={9}>
+            <Dropdown>
+
+              <Dropdown.Toggle variant="outline-secondary">
+                Stream
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item>Information Technology</Dropdown.Item>
+                <Dropdown.Item>Commerce</Dropdown.Item>
+                <Dropdown.Item>Science</Dropdown.Item>
+                <Dropdown.Item>Arts</Dropdown.Item>
+              </Dropdown.Menu>
+
+            </Dropdown>
 
 
-            {
-              businesses.map((cv,idx,arr)=>{
-                return <Link key={cv.id} to={'/detail?business_id='+cv.id} style={{textDecoration: 'none'}}>
-                <Card className='p-3 mb-3 '>
+            {/* Degree Type */}
 
-                  <Row>
+            <Dropdown>
 
-                    <Col sm={3}>
-                      <Card.Img
-                        className='img-fluid'
-                        variant="top"
-                        src={ (cv.attributes.photo.data !== null) ? URL+cv.attributes.photo.data[0].attributes.url: img}
-                      />
+              <Dropdown.Toggle variant="outline-secondary">
+                Degree Type
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item>Graduation</Dropdown.Item>
+                <Dropdown.Item>Post Graduation</Dropdown.Item>
+                <Dropdown.Item>Diploma</Dropdown.Item>
+                <Dropdown.Item>Certificate</Dropdown.Item>
+              </Dropdown.Menu>
+
+            </Dropdown>
+
+
+            {/* All Filters */}
+
+            <Dropdown>
+
+              <Dropdown.Toggle variant="outline-success">
+
+                <FontAwesomeIcon
+                  icon={faFilter}
+                  className="me-2"
+                />
+
+                All Filters
+
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item>Top Rated</Dropdown.Item>
+                <Dropdown.Item>Quick Response</Dropdown.Item>
+                <Dropdown.Item>JD Verified</Dropdown.Item>
+                <Dropdown.Item>JD Trust</Dropdown.Item>
+                <Dropdown.Item>Managed By</Dropdown.Item>
+                <Dropdown.Item>Student Gender</Dropdown.Item>
+              </Dropdown.Menu>
+
+            </Dropdown>
+
+          </div>
+
+        </Col>
+
+      </Row>
+
+
+      {/* Main Content */}
+
+      <Row className="g-4">
+
+        {/* Left Side: Business Results */}
+
+        <Col xs={12} lg={9}>
+
+          {businesses.length > 0 ? (
+
+            businesses.map(cv => {
+
+              const business = cv.attributes || {}
+
+              const photos = business.photo?.data
+
+              const photoUrl = Array.isArray(photos)
+                ? photos[0]?.attributes?.url
+                : photos?.attributes?.url
+
+              return (
+
+                <Card
+                  key={cv.id}
+                  className="mb-3 shadow-sm"
+                  onClick={()=>{ navigate(`/detail?business_id=${cv.id}`)}}
+                >
+
+                  <Row className="g-0">
+
+                    {/* Business Image */}
+
+                    <Col xs={12} sm={4} md={3}>
+
+                     
+
+                        <Card.Img
+                          src={
+                            photoUrl
+                              ? `${URL}${photoUrl}`
+                              : img
+                          }
+                          alt={business.name || 'Business'}
+                          className="h-100 rounded-start"
+                          style={{
+                            objectFit: 'cover',
+                            minHeight: '200px',
+                            maxHeight: '240px'
+                          }}
+                        />
+
 
                     </Col>
 
-                    <Col sm={9}>
 
-                      <Card.Body>
+                    {/* Business Details */}
 
-                        <Card.Title>
-                        {cv.attributes.name}
-                        </Card.Title>
+                    <Col xs={12} sm={8} md={9}>
 
-                        <Badge className='p-2 fs-6' bg="success">
-                          4.8   
-                        </Badge>
+                      <Card.Body className="p-3 p-md-4">
 
-                        <span className='ms-2'>
-                        {star.map((cv2,idx2,arr2)=>{
+                        <Link
+                          to={`/detail?business_id=${cv.id}`}
+                          className="text-decoration-none text-dark"
+                        >
 
-                          return cv2
+                          <Card.Title className="fw-bold mb-2">
 
-                        })}                         
-                        </span>
+                            {business.name}
 
-                        <span className='ms-2'>
-                          97 Rating
-                        </span>
+                          </Card.Title>
 
-                        <Card.Text>
-                          {cv.attributes.desc}
+                        </Link>
+
+
+                        {/* Rating */}
+
+                        <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
+
+                          <Badge
+                            bg="success"
+                            className="p-2 fs-6"
+                          >
+                            {business.star ?? 'N/A'}
+                          </Badge>
+
+                          <span className="text-warning">
+
+                            {[1, 2, 3, 4, 5].map(number => (
+
+                              <FontAwesomeIcon
+                                key={number}
+                                icon={faStar}
+                                className={
+                                  number <= Number(business.star || 0)
+                                    ? 'text-warning'
+                                    : 'text-secondary opacity-25'
+                                }
+                              />
+
+                            ))}
+
+                          </span>
+
+                          <span className="text-muted small">
+                            Rating
+                          </span>
+
+                        </div>
+
+
+                        {/* Description */}
+
+                        <Card.Text className="text-muted mb-3">
+
+                          {business.desc || 'No description available.'}
+
                         </Card.Text>
-                      
-                      <div className='d-flex gap-2'>
-                        <a href={"tel:"+cv.attributes.phone} className='btn btn-success' onClick={(e)=>{ e.stopPropagation() }}>
-                        <FontAwesomeIcon icon={faPhone} /> {cv.attributes.phone}
-                        </a>
-                      </div>
+
+
+                        {/* Phone */}
+
+                        <div className="d-flex flex-wrap gap-2">
+
+                          {business.phone && (
+
+                            <Button
+                              as="a"
+                              href={`tel:${business.phone}`}
+                              variant="success"
+                              onClick={e => e.stopPropagation()}
+                            >
+
+                              <FontAwesomeIcon
+                                icon={faPhone}
+                                className="me-2"
+                              />
+
+                              {business.phone}
+
+                            </Button>
+
+                          )}
+
+                          <Button
+                            as={Link}
+                            to={`/detail?business_id=${cv.id}`}
+                            variant="outline-success"
+                          >
+                            View Details
+                          </Button>
+
+                        </div>
 
                       </Card.Body>
 
@@ -207,49 +370,98 @@ export default function Search() {
                   </Row>
 
                 </Card>
-                </Link>
-                
-              })
-            }
+
+              )
+
+            })
+
+          ) : (
+
+            <Card className="border-0 shadow-sm">
+
+              <Card.Body className="text-center py-5">
+
+                <h5 className="fw-bold">
+                  No Businesses Found
+                </h5>
+
+                <p className="text-muted mb-0">
+                  Try searching for another category.
+                </p>
+
+              </Card.Body>
+
+            </Card>
+
+          )}
 
         </Col>
 
-        {/* Right Side */}
-        <Col sm={3}>
 
-          <Card>
+        {/* Right Side: Sidebar */}
 
-            <Row>
+        <Col xs={12} lg={3}>
 
-              <Col sm={6}>
-              <Card.Img
-                  className='img-fluid'
-                  variant="top"
-                  src="https://content.jdmagicbox.com/v2/comp/mumbai/a9/022pxx22.xx22.260424215513.d6a9/catalogue/parsi-table-restaurant-anand-nagar-jogeshwari-west-mumbai-parsi-restaurants-5if7za84eh-250.jpg?w=640&q=75"
-                  />
+          <Card className="shadow-sm p-3">
 
-                   <Button variant="success" className='w-100'>
-                  <FontAwesomeIcon icon={faPhone} /> 9839393922
-                  </Button>
+            <h5 className="fw-bold mb-3">
+              Featured Businesses
+            </h5>
 
-              </Col>
+            <Row className="g-3">
 
-              <Col sm={6}>
-              <Card.Img
-                  className='img-fluid'
-                  variant="top"
-                  src="https://content.jdmagicbox.com/v2/comp/mumbai/a9/022pxx22.xx22.260424215513.d6a9/catalogue/parsi-table-restaurant-anand-nagar-jogeshwari-west-mumbai-parsi-restaurants-5if7za84eh-250.jpg?w=640&q=75"
-                  />
+              {[1, 2].map(item => (
 
-                   <Button variant="success" className='w-100'>
-                  <FontAwesomeIcon icon={faPhone} /> 9839393922
-                  </Button>
+                <Col
+                  key={item}
+                  xs={6}
+                  lg={12}
+                >
 
-                  
+                  <Card className="h-100">
 
-              </Col>
+                    <Card.Img
+                      variant="top"
+                      src={img}
+                      alt="Featured business"
+                      style={{
+                        height: '140px',
+                        objectFit: 'cover'
+                      }}
+                    />
 
-                  </Row>
+                    <Card.Body className="p-2">
+
+                      <Card.Title className="fs-6">
+                        Featured Business
+                      </Card.Title>
+
+                      <Button
+                        as="a"
+                        href="tel:9839393922"
+                        variant="success"
+                        size="sm"
+                        className="w-100"
+                      >
+
+                        <FontAwesomeIcon
+                          icon={faPhone}
+                          className="me-1"
+                        />
+
+                        Call Now
+
+                      </Button>
+
+                    </Card.Body>
+
+                  </Card>
+
+                </Col>
+
+              ))}
+
+            </Row>
 
           </Card>
 
@@ -257,6 +469,8 @@ export default function Search() {
 
       </Row>
 
-    </>
+    </Container>
+
   )
+
 }

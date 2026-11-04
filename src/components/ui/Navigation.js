@@ -32,6 +32,34 @@ export default function Navigation() {
   }, [])
 
 
+  let Language = (e) => {
+
+
+    let lang=e.target.innerHTML
+
+    if (lang==='English') {
+
+        console.log('Hindi');
+        
+        e.target.innerHTML='Hindi'
+
+        window.localStorage.setItem('lang','hi')
+      
+    }else{
+
+      console.log('English');
+      
+
+      e.target.innerHTML='English'
+
+      window.localStorage.setItem('lang','en')
+
+    }
+    
+
+  }
+
+
   // Current Location
   let getCurrentLocation = () => {
 
@@ -173,6 +201,8 @@ export default function Navigation() {
     })
 
   }
+
+
 
 
   // Logout
@@ -379,6 +409,14 @@ export default function Navigation() {
               </>
 
             }
+
+            <Nav.Link
+                  onClick={(e)=>{Language(e)}}
+                  className="btn btn-link"
+                >
+                  English
+                </Nav.Link>
+
 
 
             {

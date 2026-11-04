@@ -37,7 +37,6 @@ export default function Detail() {
     const businessid=searchParams.get('business_id');
 
     useEffect(() => {  
-
         setReviewPayload(prev => ({
             ...prev,
             data:{
@@ -210,6 +209,8 @@ export default function Detail() {
                 <Button variant="primary" type="button" onClick={(e)=>{submitReview(e)}}>
                     Submit
                 </Button>
+
+                
              </Form>           
 
         </>
